@@ -13,8 +13,10 @@ def replay_drive(lr, safety_mode, param):
   assert err == 0, "invalid safety mode: %d" % safety_mode
 
   if "SEGMENT" in os.environ:
-    init_segment(safety, lr, mode)
+    #init_segment(safety, lr, mode)
+    init_segment(safety, lr, safety_mode)
 
+  print("MIKEY2: replaying drive with safety mode %d and param %d" % (safety_mode, param))
   rx_tot, rx_invalid, tx_tot, tx_blocked, tx_controls, tx_controls_blocked = 0, 0, 0, 0, 0, 0
   blocked_addrs = set()
   invalid_addrs = set()
@@ -25,8 +27,11 @@ def replay_drive(lr, safety_mode, param):
       start_t = msg.logMonoTime
     safety.set_timer(((msg.logMonoTime // 1000)) % 0xFFFFFFFF)
 
+    #print("MIKEY2: msg.which() %s " % (msg.which()))
+
     if msg.which() == 'sendcan':
      for canmsg in msg.sendcan:
+        print("MIKEY2: msg.adress() %x " % (canmsg.address))
         to_send = package_can_msg(canmsg)
         sent = safety.safety_tx_hook(to_send)
         if not sent:
@@ -40,6 +45,7 @@ def replay_drive(lr, safety_mode, param):
         tx_tot += 1
     elif msg.which() == 'can':
       for canmsg in msg.can:
+        print("MIKEY: msg.adress() %x " % (canmsg.address))
         # ignore msgs we sent
         if canmsg.src >= 128:
           continue
@@ -72,6 +78,6 @@ if __name__ == "__main__":
   r = Route(sys.argv[1])
   lr = MultiLogIterator(r.log_paths(), wraparound=False)
 
-  print("replaying drive %s with safety mode %d and param %d" % (sys.argv[1], mode, param))
+  print("MIKEY: replaying drive %s with safety mode %d and param %d" % (sys.argv[1], mode, param))
 
   replay_drive(lr, mode, param)

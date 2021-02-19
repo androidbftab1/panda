@@ -25,6 +25,11 @@ logs = [
   ("5ab784f361e19b78_2020-06-08--16-30-41.bz2", Panda.SAFETY_SUBARU_LEGACY, 0),  # SUBARU.OUTBACK
 ]
 
+logs0 = [
+  # (route, safety mode, param)
+  ("2425568437959f9d|2019-12-22--16-24-37.bz2", Panda.SAFETY_HONDA_NIDEC, 0),  # HONDA.CIVIC (fcw presents: 0x1FA blocked as expected)
+  ("5ab784f361e19b78_2020-06-08--16-30-41.bz2", Panda.SAFETY_ALLOUTPUT, 0),  # SUBARU.OUTBACK
+]
 
 
 if __name__ == "__main__":
@@ -39,7 +44,7 @@ if __name__ == "__main__":
   for route, mode, param in logs:
     lr = LogReader(route)
 
-    print("\nreplaying %s with safety mode %d and param %s" % (route, mode, param))
+    print("\nMIKEY: replaying %s with safety mode %d and param %s" % (route, mode, param))
     if not replay_drive(lr, mode, int(param)):
       failed.append(route)
 
