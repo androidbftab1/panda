@@ -851,6 +851,17 @@ int main(void) {
   timer_init(TIM9, 183);
   NVIC_EnableIRQ(TIM1_BRK_TIM9_IRQn);
 
+#ifdef BPI
+#else
+        uint32_t div_mode = ((usb_power_mode == USB_POWER_DCP) ? 4U : 1U);
+        for(uint32_t fade = 0U; fade < MAX_FADE; fade += div_mode){
+          current_board->set_led(LED_BLUE, true);
+          delay(fade >> 4);
+          current_board->set_led(LED_BLUE, false);
+          delay((MAX_FADE - fade) >> 4);
+        }
+#endif
+
 #ifdef DEBUG
   puts("DEBUG ENABLED\n");
 #endif
@@ -869,27 +880,29 @@ int main(void) {
       if(fault_status == FAULT_STATUS_NONE){
       #endif
         uint32_t div_mode = ((usb_power_mode == USB_POWER_DCP) ? 4U : 1U);
+//#define LED_BLINK	LED_GREEN
+#define LED_BLINK	LED_RED
 
         // useful for debugging, fade breaks = panda is overloaded
         for(uint32_t fade = 0U; fade < MAX_FADE; fade += div_mode){
-          current_board->set_led(LED_RED, true);
+          current_board->set_led(LED_BLINK, true);
           delay(fade >> 4);
-          current_board->set_led(LED_RED, false);
+          current_board->set_led(LED_BLINK, false);
           delay((MAX_FADE - fade) >> 4);
         }
 
         for(uint32_t fade = MAX_FADE; fade > 0U; fade -= div_mode){
-          current_board->set_led(LED_RED, true);
+          current_board->set_led(LED_BLINK, true);
           delay(fade >> 4);
-          current_board->set_led(LED_RED, false);
+          current_board->set_led(LED_BLINK, false);
           delay((MAX_FADE - fade) >> 4);
         }
 
       #ifdef DEBUG_FAULTS
       } else {
-          current_board->set_led(LED_RED, 1);
+          current_board->set_led(LED_BLINK, 1);
           delay(512000U);
-          current_board->set_led(LED_RED, 0);
+          current_board->set_led(LED_BLINK, 0);
           delay(512000U);
         }
       #endif
