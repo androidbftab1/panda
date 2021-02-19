@@ -110,6 +110,10 @@ void debug_ring_callback(uart_ring *ring) {
 void set_safety_mode(uint16_t mode, int16_t param) {
   uint16_t mode_copy = mode;
   int err = set_safety_hooks(mode_copy, param);
+#ifdef DEBUG
+        puts("** MIKEY SAFETY: ");
+        puth(mode_copy); puts(" "); puth(param); puts("\n");
+#endif
   if (err == -1) {
     puts("Error: safety set mode failed. Falling back to SILENT\n");
     mode_copy = SAFETY_SILENT;
@@ -224,6 +228,7 @@ void usb_cb_ep3_out(void *usbdata, int len, bool hardwired) {
   UNUSED(hardwired);
   int dpkt = 0;
   uint32_t *d32 = (uint32_t *)usbdata;
+  puts("** MIKEY: send on CAN\n");
   for (dpkt = 0; dpkt < (len / 4); dpkt += 4) {
     CAN_FIFOMailBox_TypeDef to_push;
     to_push.RDHR = d32[dpkt + 3];
@@ -695,7 +700,8 @@ void TIM1_BRK_TIM9_IRQ_Handler(void) {
         pending_can_live = 0;
       }
       #ifdef DEBUG
-        puts("** blink ");
+        //puts("** blink ");
+        puts("** MIKEY: blink ");
         puth(can_rx_q.r_ptr); puts(" "); puth(can_rx_q.w_ptr); puts("  ");
         puth(can_tx1_q.r_ptr); puts(" "); puth(can_tx1_q.w_ptr); puts("  ");
         puth(can_tx2_q.r_ptr); puts(" "); puth(can_tx2_q.w_ptr); puts("\n");
