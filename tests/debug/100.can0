@@ -1,0 +1,42 @@
+
+CANBUS=can0
+##CANBUS=can1
+ttt()
+{
+for I in 1 2 3 4 5
+do
+  cansend $CANBUS 475#0000004000000000
+  sleep 0.2
+done
+for I in 1 2 3 4 5
+do
+  cansend $CANBUS 475#0000000000000000
+  sleep 0.2
+done
+for I in 1 2 3 4 5
+do
+  cansend $CANBUS 475#0000004000000000
+  sleep 0.2
+done
+for I in 1 2 3 4 5
+do
+  cansend $CANBUS 475#0000000000000000
+  sleep 0.2
+done
+}
+
+T=0.01
+while [ 1 ] ;
+do
+  cansend $CANBUS 100#0a0000A000000000
+  sleep $T
+  cansend $CANBUS 100#0a0000A000000000
+  sleep $T
+  cansend $CANBUS 100#0a0000A000000000
+  sleep $T
+  cansend $CANBUS 100#0a00000000000000
+  sleep $T
+  cansend $CANBUS 100#0a00000000000000
+  sleep $T
+
+done
